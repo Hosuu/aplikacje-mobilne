@@ -4,7 +4,6 @@ import { connectToDB } from "@/utils/dbConnect"
 export default async function Page() {
   await connectToDB()
   const cafes = await Cafe.find()
-  console.log(cafes)
 
   return (
     <div>
