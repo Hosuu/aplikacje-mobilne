@@ -1,4 +1,4 @@
-import Cafe from "@/models/cafe"
+import Cafe from "@/models/Cafe"
 import { connectToDB } from "@/utils/dbConnect"
 
 export default async function Page() {
