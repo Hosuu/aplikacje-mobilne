@@ -6,9 +6,11 @@ export default function ClientSideComp() {
   const [data, setData] = useState("Fetching...")
 
   const fetchData = async () => {
+    const start = performance.now()
     const response = await fetch("api/test")
+    const time = Math.floor(performance.now() - start)
     const data = await response.text()
-    setData(data)
+    setData(data + ` in ${time}ms`)
     return data
   }
 
@@ -16,5 +18,9 @@ export default function ClientSideComp() {
     fetchData()
   }, [])
 
-  return <div>Clientside API result: {data}</div>
+  return (
+    <div className='text-center'>
+      Clientside API result: <p>{data}</p>
+    </div>
+  )
 }
