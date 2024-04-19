@@ -1,5 +1,5 @@
+import { connectToDB } from "@/lib/dbConnect"
 import Cafe, { CafeSchema } from "@/models/Cafe"
-import { connectToDB } from "@/utils/dbConnect"
 
 export async function GET() {
   await connectToDB()
