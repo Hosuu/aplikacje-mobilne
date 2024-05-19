@@ -1,15 +1,17 @@
 import { auth } from "@/auth"
 import Link from "next/link"
-import ClientSideComp from "./_clientSideComp"
+import { redirect } from "next/navigation"
 
 export default async function Home() {
   const session = await auth()
+  console.log(session)
+  if (session != undefined) redirect("/app")
+
   return (
     <main className='flex min-h-screen flex-col items-center justify-around'>
       <h1 className='text-4xl font-bold'>
         WroKawka <p className='text-sm'>Coś wiecej, niż tylko kawiarnie</p>
       </h1>
-      <ClientSideComp />
       {session === null ? (
         <Link href={"/login"} className='bg-sky-600 hover:bg-sky-800  rounded-full text-center py-2 px-5'>
           Zaloguj
@@ -24,13 +26,6 @@ export default async function Home() {
           </Link>
         </div>
       )}
-      <Link className='bg-sky-600 hover:bg-sky-800 rounded-full text-center py-2 px-5' href={"/cafe/add"}>
-        Dodaj kawiarnie
-      </Link>
-      <p>
-        SESSION DATA:
-        {JSON.stringify(session)}
-      </p>
     </main>
   )
 }

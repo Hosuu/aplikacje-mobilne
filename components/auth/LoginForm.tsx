@@ -16,7 +16,7 @@ export default function LoginForm() {
   const email = searchParams.get("email") ?? undefined
 
   useEffect(() => {
-    if (result && result.success) setTimeout(() => router.refresh(), 1000)
+    if (result && result.success) setTimeout(() => router.push("/"), 500)
   }, [result, router])
 
   return (

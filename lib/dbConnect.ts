@@ -3,7 +3,7 @@ import mongoose from "mongoose"
 const MONGODB_URI = process.env.MONGODB_URI
 
 //Close DB connection after x milisecodns of inactivity.
-const CLOSE_INACTIVE_CONNECTION = true
+const CLOSE_INACTIVE_CONNECTION = false
 const CONNECTION_TIMEOUT = 30 * 60 * 1000 //30 minutes
 
 //Works only in dev env for debuging purposes
