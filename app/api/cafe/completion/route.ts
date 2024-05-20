@@ -1,9 +1,11 @@
-import { NextRequest } from "next/server"
+import { auth } from "@/auth"
 
-export async function GET(request: NextRequest) {
-  const API_KEY = process.env.GMAPS_API_KEY
+const API_KEY = process.env.GMAPS_API_KEY
 
-  const searchParams = request.nextUrl.searchParams
+export const GET = auth(async (req) => {
+  if (req.auth === null) return new Response("Not authorized", { status: 403 })
+
+  const searchParams = req.nextUrl.searchParams
   const query = searchParams.get("query")
 
   const response = await fetch(
@@ -12,4 +14,4 @@ export async function GET(request: NextRequest) {
 
   const data = await response.json()
   return new Response(JSON.stringify(data.results))
-}
+})

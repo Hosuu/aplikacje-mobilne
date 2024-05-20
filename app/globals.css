@@ -31,3 +31,9 @@ body {
     text-wrap: balance;
   }
 }
+
+@layer utilities {
+  .pb-safe-main-view {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+}

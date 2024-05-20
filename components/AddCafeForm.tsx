@@ -39,7 +39,7 @@ export default function AddCafeForm() {
   const [result, dispatch] = useFormState(AddCafe, undefined)
 
   useEffect(() => {
-    if (result?.criticalError) window.setTimeout(() => {setGooglePlace(null)}, 500) //prettier-ignore
+    if (result?.criticalError) window.setTimeout(() => {router.back()}, 500) //prettier-ignore
     if (result?.success) window.setTimeout(() => {router.replace(`/app/cafe/${googlePlace?.place_id}`)}, 500) //prettier-ignore
   }, [result, router, googlePlace])
 

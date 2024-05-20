@@ -5,9 +5,10 @@ import { FC, useEffect, useLayoutEffect, useState } from "react"
 
 interface TagSelectProps {}
 
-interface Tag {
+export interface Tag {
   _id: string
   name: string
+  description: string
 }
 
 export const TagSelect: FC<TagSelectProps> = () => {
@@ -96,6 +97,7 @@ export const TagSelect: FC<TagSelectProps> = () => {
                 <div className='text-zinc-100 text-sm leading-6 font-medium text-nowrap text-ellipsis overflow-hidden'>
                   {t.name}
                 </div>
+                <div className='text-zinc-500 text-xs leading-5 font-normal'>{t.description}</div>
               </div>
             ))}
           </div>

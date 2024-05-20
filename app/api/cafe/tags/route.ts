@@ -1,8 +1,12 @@
+import { auth } from "@/auth"
 import { connectToDB } from "@/lib/dbConnect"
 import Tag from "@/models/Tag"
 
-export async function GET() {
+export const GET = auth(async (req) => {
+  if (req.auth === null) return new Response("Not authorized", { status: 403 })
+
   await connectToDB()
   const tags = await Tag.find()
+
   return new Response(JSON.stringify(tags))
-}
+})
