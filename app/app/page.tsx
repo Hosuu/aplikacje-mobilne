@@ -4,7 +4,7 @@ import { FC, ReactNode } from "react"
 
 interface pageProps {}
 
-export default function Page({}: pageProps) {
+export default async function Page({}: pageProps) {
   return (
     <div className='flex flex-col gap-2.5'>
       <Link href={"app/cafe/new"} className='flex p-4 gap-4 bg-zinc-950 '>

@@ -1,27 +1,34 @@
-import { auth } from "@/auth"
 import { CafeReviewBody } from "@/components/CafeReviewBody"
 import { InfoLabel } from "@/components/InfoLabel"
 import { InfoRow } from "@/components/InfoRow"
-import { connectToDB } from "@/lib/dbConnect"
-import Cafe from "@/models/Cafe"
+import { OpeningHours } from "@/components/OpeningHours"
 import { Compass, Globe, LucideIcon, Phone, Star } from "lucide-react"
 import Link from "next/link"
-import { redirect } from "next/navigation"
 import { FC } from "react"
 
 interface pageProps {
-  params: { cafeID: string }
+  params: { cafeId: string }
 }
 
 export default async function Page({ params }: pageProps) {
-  const session = await auth()
-  if (session?.user == undefined) {
-    redirect("/")
-  }
+  // if (!mongoose.Types.ObjectId.isValid(params.cafeId)) return <div>{params.cafeId} is not proper cafe id</div>
+  // await connectToDB()
+  // const cafe = await Cafe.findOne({ googleMapsPlaceID: params.cafeId })
+  // if (cafe === null) return <div>CAFE NOT FOUND</div>
 
-  await connectToDB()
-  const cafe = await Cafe.findById(params.cafeID)
-  // if (cafe === null) return <div>CAFFE NOT FOUND</div>
+  const gMapsResponse = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${params.cafeId}&key=${process.env.GMAPS_API_KEY}&language=pl&fields=name,international_phone_number,opening_hours,website,url,serves_beer,price_level,reviews,formatted_address`, {
+    // cache: "force-cache",
+  }) //prettier-ignore
+  const gMapsDetails = await gMapsResponse.json()
+
+  const openingHours = gMapsDetails.result?.opening_hours.weekday_text
+  const address = gMapsDetails.result?.formatted_address
+  const website = gMapsDetails.result?.website
+  const phone = gMapsDetails.result?.international_phone_number
+  const gMapUrl = gMapsDetails.result?.url
+  const name = gMapsDetails.result?.name
+  const reviews = gMapsDetails.result?.reviews ?? []
+  const beer = gMapsDetails.result?.serves_beer
 
   return (
     <>
@@ -36,16 +43,17 @@ export default async function Page({ params }: pageProps) {
       </div>
 
       {/* CAFE NAME */}
-      <div className='text-3xl leading-10 font-extrabold self-center'>Fauget catering</div>
+      <div className='text-3xl leading-10 font-extrabold self-center'>{name}</div>
 
       {/* USER INFO */}
       <div className='w-full flex-grow p-4 flex flex-col gap-8 rounded-t-2xl bg-zinc-950'>
         {/* Cafe Buttons */}
-        <div className='flex pt-4 gap-4 justify-between'>
-          <CafeInfoButton Icon={Phone} href='tel:+48987654321' label='Zadzwoń' />
-          <CafeInfoButton Icon={Compass} href='tel:+48987654321' label='Dojazd' />
-          <CafeInfoButton Icon={Globe} href='tel:+48987654321' label='Strona' />
+        <div className='flex pt-4 gap-4 justify-around'>
+          {phone && <CafeInfoButton Icon={Phone} href={`tel:${phone}`} label='Zadzwoń' />}
+          {gMapUrl && <CafeInfoButton Icon={Compass} href={gMapUrl} label='Dojazd' />}
+          {website && <CafeInfoButton Icon={Globe} href={website} label='Strona' />}
         </div>
+
         {/* CAFE DETAILS */}
         <div>
           <InfoLabel label='Informacje' />
@@ -58,14 +66,22 @@ export default async function Page({ params }: pageProps) {
               </>
             }
           />
-          <InfoRow label='Godziny otwarcia' value='09:00 - 21:00' />
-          <InfoRow label='Adres' value='Banana słodkiego 42/2' />
+          {openingHours && <OpeningHours timeTable={openingHours} />}
+          {address && <InfoRow label='Adres' value={address} />}
+          <InfoRow label='Piwo 🍺' value={beer ? "Jest!" : "Nie ma :("} />
         </div>
         <div className='flex flex-col gap-3'>
-          <InfoLabel label='Recenzje' linkText='Dodaj recenzję' url={"asd" + "/addReview"} />
-          <CafeReview />
-          <CafeReview />
-          <CafeReview />
+          <InfoLabel label='Recenzje' linkText='Dodaj recenzję' url={params.cafeId + "/addReview"} />
+          {reviews.map((r: any, i: number) => (
+            <CafeReview
+              rating={r.rating}
+              author={r.author_name}
+              time={r.time}
+              text={r.text}
+              key={i}
+              relative_time_description={r.relative_time_description}
+            />
+          ))}
         </div>
       </div>
     </>
@@ -89,19 +105,26 @@ const CafeInfoButton: FC<CafeInfoButtonProps> = ({ Icon, label, href }) => {
   )
 }
 
-interface CafeReviewProps {}
+interface CafeReviewProps {
+  author: string
+  text: string
+  rating: number
+  time: number
+  relative_time_description: string
+}
 
-const CafeReview: FC<CafeReviewProps> = () => {
+const CafeReview: FC<CafeReviewProps> = ({ author, text, rating, time, relative_time_description }) => {
   return (
     <div className='flex p-2 flex-col gap-2.5 rounded-lg bg-zinc-900/50'>
       <div className='flex justify-between items-center'>
-        <div className='text-base leading-7 font-semibold text-zinc-100'>Username</div>
-        <StarRating rating={3} />
+        <div className='text-base leading-7 font-semibold text-zinc-100'>{author}</div>
+        <StarRating rating={rating} />
       </div>
-      <CafeReviewBody />
+      <CafeReviewBody text={text} />
       <div className='flex justify-between items-center'>
-        <div className='text-xs leading-4 font-normal text-zinc-400'>05.05.2025</div>
-        <div className=''> - 100 +</div>
+        {/* <div className='text-xs leading-4 font-normal text-zinc-400'>{new Date(time).toLocaleDateString()}</div> */}
+        <div className='text-xs leading-4 font-normal text-zinc-400'>{relative_time_description}</div>
+        {/* <div className=''> - 100 +</div> */}
       </div>
     </div>
   )

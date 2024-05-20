@@ -2,6 +2,7 @@
 
 interface AddCafeResult {
   success: boolean
+  criticalError: boolean
   message: string
 }
 
@@ -16,19 +17,24 @@ export async function AddCafe(currentState: any, formData: FormData): Promise<Ad
   if (gPlaceId === null || name === null) {
     return {
       success: false,
-      message: "Critical error",
+      criticalError: true,
+      message: "Wystąpił błąd krytyczny!",
     }
   }
 
   if ((desc as string).search(/brzydkie slowa/) >= 0) {
     return {
       success: false,
-      message: "Grzeczniej szcylu",
+      criticalError: false,
+      message: "Opis zawiera nieodpowiednie słownictwo",
     }
   }
 
+  // TODO SAVE CAFE TO DB
+
   return {
     success: true,
+    criticalError: false,
     message: "Pomyslnie dodano kawiarnie!",
   }
 }

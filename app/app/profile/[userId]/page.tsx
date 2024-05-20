@@ -1,20 +1,15 @@
-import { auth } from "@/auth"
 import { InfoLabel } from "@/components/InfoLabel"
 import { InfoRow } from "@/components/InfoRow"
 import { connectToDB } from "@/lib/dbConnect"
 import User from "@/models/User"
-import { redirect } from "next/navigation"
 
-interface pageProps {}
+interface pageProps {
+  params: { userId: string }
+}
 
-export default async function Page({}: pageProps) {
-  const session = await auth()
-  if (session?.user == undefined) {
-    redirect("/")
-  }
-
+export default async function Page({ params }: pageProps) {
   await connectToDB()
-  const user = await User.findById(session?.user?.id)
+  const user = await User.findById(params.userId)
   if (user === null) return <div> USER NOT FOUND</div>
 
   return (

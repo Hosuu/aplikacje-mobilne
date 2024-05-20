@@ -1,18 +1,18 @@
 import { auth } from "@/auth"
-import LoginForm from "@/components/auth/LoginForm"
+import SignupForm from "@/components/auth/SignupForm"
 import { Session } from "next-auth"
 import { redirect } from "next/navigation"
 
-export default async function LoginPage() {
+export default async function SignupPage() {
   const session = (await auth()) as Session
 
   if (session) {
-    redirect("/")
+    redirect("/app")
   }
 
   return (
     <main className='flex flex-col p-4'>
-      <LoginForm />
+      <SignupForm />
     </main>
   )
 }

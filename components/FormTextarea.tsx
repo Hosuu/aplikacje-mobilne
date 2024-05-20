@@ -1,7 +1,7 @@
 import { FC, HTMLInputTypeAttribute } from "react"
 import { useFormStatus } from "react-dom"
 
-interface LoginInputProps {
+interface FormTextareaProps {
   label: string
   name: string
   type?: HTMLInputTypeAttribute
@@ -13,7 +13,7 @@ interface LoginInputProps {
   defaultValue?: string
 }
 
-const AuthFormInput: FC<LoginInputProps> = ({
+const FormTextarea: FC<FormTextareaProps> = ({
   label,
   name,
   type,
@@ -30,11 +30,10 @@ const AuthFormInput: FC<LoginInputProps> = ({
       <label className='mb-3 mt-5 block text-xs font-medium text-zinc-400' htmlFor={name}>
         {label}
       </label>
-      <input
-        className='peer block w-full rounded-md border bg-zinc-50 px-2 py-[9px] text-sm outline-none placeholder:text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 disabled:cursor-not-allowed'
+      <textarea
+        className='peer block w-full rounded-md border  px-2 py-[9px] text-sm outline-none placeholder:text-zinc-500 border-zinc-800 bg-zinc-950 disabled:bg-zinc-900 disabled:text-zinc-400 disabled:cursor-not-allowed min-h-16'
         id={name}
         name={name}
-        type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
         required={required}
@@ -45,4 +44,4 @@ const AuthFormInput: FC<LoginInputProps> = ({
   )
 }
 
-export default AuthFormInput
+export default FormTextarea
