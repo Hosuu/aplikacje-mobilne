@@ -27,6 +27,7 @@ export default function SignupForm() {
           type='text'
           name='username'
           required
+          autoComplete='off'
           label='Nazwa użytkownika'
           placeholder='Wprowadź swoją nazwę użytkownika'
           disabled={result?.success}
@@ -35,6 +36,7 @@ export default function SignupForm() {
           type='email'
           name='email'
           required
+          autoComplete='off'
           label='Adres e-mail'
           placeholder='Wprowadź swój adres e-mail'
           disabled={result?.success}

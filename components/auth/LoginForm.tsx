@@ -30,6 +30,7 @@ export default function LoginForm() {
           type='email'
           name='email'
           required
+          autoComplete='off'
           defaultValue={email}
           label='Adres e-mail'
           placeholder='Wprowadź swój adres e-mail'
