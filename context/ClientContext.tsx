@@ -52,7 +52,6 @@ export const ClientContextProvider: FC<ClientContextProviderProps> = ({ children
 
   useLayoutEffect(() => {
     navigator.geolocation.getCurrentPosition(setGeolocationPosition)
-    console.log("Zapytalem o lokalizacje")
   }, [])
 
   return (

@@ -1,5 +1,6 @@
 "use server"
 
+import { connectToDB } from "@/lib/dbConnect"
 import Cafe from "@/models/Cafe"
 
 interface AddCafeResult {
@@ -31,7 +32,8 @@ export async function AddCafe(currentState: any, formData: FormData): Promise<Ad
     }
   }
 
-  if ((await Cafe.find({ googleMapsPlaceID: gPlaceId as string })).length) {
+  await connectToDB()
+  if (await Cafe.findById(gPlaceId as string)) {
     return {
       success: false,
       criticalError: true,
@@ -47,14 +49,9 @@ export async function AddCafe(currentState: any, formData: FormData): Promise<Ad
     const latitude = gMapsData.result.geometry.location.lat
     const longitude = gMapsData.result.geometry.location.lng
 
-    console.log(gMapsData.result)
-    console.log(latitude)
-    console.log(longitude)
-    console.log(tags)
-
     const cafe = new Cafe({
+      _id: gPlaceId,
       name,
-      googleMapsPlaceID: gPlaceId,
       tags,
       description,
       latitude,

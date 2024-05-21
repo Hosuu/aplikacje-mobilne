@@ -39,11 +39,12 @@ export default function AddCafeForm() {
   const router = useRouter()
   const [googlePlace, setGooglePlace] = useState<GooglePlace | null>(null)
   const [result, dispatch] = useFormState(AddCafe, undefined)
+  const { cafes } = useContext(ClientContext)
 
   useEffect(() => {
-    if (result?.criticalError) window.setTimeout(() => { router.back()}, 500) //prettier-ignore
+    if (result?.criticalError) window.setTimeout(() => { router.back()}, 1000) //prettier-ignore
     if (result?.success) window.setTimeout(() => {fetchCafe(); router.replace(`/app/cafe/${googlePlace?.place_id}`)}, 500) //prettier-ignore
-  }, [result, router, googlePlace])
+  }, [result, router, googlePlace, fetchCafe])
 
   //Pre form state render
   if (googlePlace === null) {
@@ -71,17 +72,23 @@ export default function AddCafeForm() {
 
         {completions.length > 0 && (
           <div className='rounded-b-lg overflow-hidden border border-t-0 border-zinc-800'>
-            {completions.map((c, i) => (
-              <div
-                key={i}
-                className='bg-zinc-900/75 hover:bg-zinc-950 p-2  cursor-pointer border-t first:border-0 border-zinc-800'
-                onClick={() => setGooglePlace(c)}>
-                <div className='text-zinc-100 text-base leading-6 font-medium text-nowrap text-ellipsis overflow-hidden'>
-                  {c.name}
+            {completions.map((c, i) => {
+              const alreadyFetched = cafes.some(({ _id }) => _id == c.place_id)
+              return (
+                <div
+                  key={i}
+                  className='bg-zinc-900/75 hover:bg-zinc-950 p-2  cursor-pointer border-t first:border-0 border-zinc-800'
+                  onClick={() => {
+                    !alreadyFetched ? setGooglePlace(c) : router.replace(`/app/cafe/${c.place_id}`)
+                  }}>
+                  <div className='text-zinc-100 text-base leading-6 font-medium text-nowrap text-ellipsis overflow-hidden'>
+                    {c.name}
+                  </div>
+                  <div className='text-zinc-500 text-xs leading-5 font-normal'>{c.formatted_address}</div>
+                  {alreadyFetched && <div className='text-sky-500 text-xs leading-5 font-normal'>Już dodano!</div>}
                 </div>
-                <div className='text-zinc-500 text-xs leading-5 font-normal'>{c.formatted_address}</div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
@@ -96,7 +103,6 @@ export default function AddCafeForm() {
         <input type='hidden' name='name' value={googlePlace.name} />
         <FormInput type='text' name='' disabled defaultValue={googlePlace.name} label='Nazwa' />
         <FormInput type='text' name='' disabled defaultValue={googlePlace.formatted_address} label='Adres' />
-        {/* <FormInput type='text' name='tags' label='Tagi' placeholder='Zabytkowa, koty, tania...' /> */}
         <TagSelect />
         <FormTextarea name='desc' label='Opis' placeholder='Wspaniała kawiarnia...' />
         <AddCafeButton disabled={!!result?.success} />

@@ -1,10 +1,13 @@
+import { CafeReview } from "@/components/CafeReview"
 import { CafeReviewBody } from "@/components/CafeReviewBody"
 import { InfoLabel } from "@/components/InfoLabel"
 import { InfoRow } from "@/components/InfoRow"
 import { OpeningHours } from "@/components/OpeningHours"
 import { connectToDB } from "@/lib/dbConnect"
 import Cafe from "@/models/Cafe"
-import { Compass, Globe, LucideIcon, Phone, Star } from "lucide-react"
+import Review from "@/models/Review"
+import { Compass, Globe, LucideIcon, Phone, Star, User } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { FC } from "react"
 
@@ -14,12 +17,17 @@ interface pageProps {
 
 export default async function Page({ params }: pageProps) {
   await connectToDB()
-  const cafe = await Cafe.findOne({ googleMapsPlaceID: params.cafeId })
+  User //Make sure model is initalized
+  Review //Make sure model is initalized
+  const cafe = await Cafe.findById(params.cafeId).populate({
+    path: "reviews",
+    select: ["rating", "text", "score", "userId", "timeStamp"],
+    populate: { path: "userId", select: ["username"] },
+  })
+
   if (cafe === null) return <div>CAFE NOT FOUND</div>
 
-  const gMapsResponse = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${params.cafeId}&key=${process.env.GMAPS_API_KEY}&language=pl&fields=name,international_phone_number,opening_hours,website,url,serves_beer,price_level,reviews,formatted_address`, {
-    // cache: "force-cache",
-  }) //prettier-ignore
+  const gMapsResponse = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${params.cafeId}&key=${process.env.GMAPS_API_KEY}&language=pl&fields=name,international_phone_number,opening_hours,website,url,serves_beer,price_level,reviews,formatted_address`) //prettier-ignore
   const gMapsDetails = await gMapsResponse.json()
 
   const openingHours = gMapsDetails.result?.opening_hours.weekday_text
@@ -28,14 +36,18 @@ export default async function Page({ params }: pageProps) {
   const phone = gMapsDetails.result?.international_phone_number
   const gMapUrl = gMapsDetails.result?.url
   const name = gMapsDetails.result?.name
-  const reviews = gMapsDetails.result?.reviews ?? []
+  const googleReviews = gMapsDetails.result?.reviews ?? []
   const beer = gMapsDetails.result?.serves_beer
+
+  //TODO display our reviews
+  const reviews = [...googleReviews]
+  const ourReviews = cafe.reviews
 
   return (
     <div className='flex flex-col gap-4'>
       {/* CAFE LOGO */}
       <div className='w-32 h-32 mt-8 rounded-full border-[3px] border-zinc-400 overflow-hidden self-center flex-shrink-0'>
-        <img
+        <Image
           src='https://img.freepik.com/free-photo/cute-ai-generated-cartoon-bunny_23-2150288870.jpg'
           alt='User profile image'
           width={128}
@@ -62,19 +74,41 @@ export default async function Page({ params }: pageProps) {
             label='Ocena'
             value={
               <>
-                {cafe.reviews.length > 0 ? `${cafe.rating}(${cafe.reviews.length})` : "Brak recenzji"}
+                {cafe.reviews.length === 0 ? (
+                  <div> Brak recenzji </div>
+                ) : (
+                  <div className='flex items-end gap-1'>
+                    <div className='text-xs text-zinc-400'>({cafe.reviews.length})</div>
+                    <div>{cafe.rating}</div>
+                  </div>
+                )}
                 <Star className='fill-yellow-500 stroke-yellow-500' />
               </>
             }
           />
           {openingHours && <OpeningHours timeTable={openingHours} />}
-          {address && <InfoRow label='Adres' value={address} />}
+          {address && <InfoRow label='Adres' value={address.split(",")[0]} />}
           <InfoRow label='Piwo 🍺' value={beer ? "Jest!" : "Nie ma :("} />
         </div>
+
         <div className='flex flex-col gap-3'>
           <InfoLabel label='Recenzje' linkText='Dodaj recenzję' url={params.cafeId + "/addReview"} />
-          {reviews.map((r: any, i: number) => (
+          {ourReviews.map((r: any, i: number) => (
             <CafeReview
+              label={r.userId.username}
+              url={`/app/profile/${r.userId._id}`}
+              rating={r.rating}
+              text={r.text}
+              timeStamp={r.timeStamp}
+              key={r._id}
+            />
+          ))}
+        </div>
+
+        <div className='flex flex-col gap-3'>
+          <InfoLabel label='Recenzje Google | temporary' />
+          {reviews.map((r: any, i: number) => (
+            <CafeReviewGoogle
               rating={r.rating}
               author={r.author_name}
               time={r.time}
@@ -114,7 +148,7 @@ interface CafeReviewProps {
   relative_time_description: string
 }
 
-const CafeReview: FC<CafeReviewProps> = ({ author, text, rating, time, relative_time_description }) => {
+const CafeReviewGoogle: FC<CafeReviewProps> = ({ author, text, rating, time, relative_time_description }) => {
   return (
     <div className='flex p-2 flex-col gap-2.5 rounded-lg bg-zinc-900/50'>
       <div className='flex justify-between items-center'>

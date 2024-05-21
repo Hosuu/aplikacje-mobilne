@@ -1,9 +1,9 @@
 import { Model, Schema, model, models } from "mongoose"
 
-interface ICafeSchema extends Document {
+export interface ICafeSchema extends Document {
   //Required
+  _id: string
   name: string
-  googleMapsPlaceID: string
   latitude: number
   longitude: number
   //Not required
@@ -17,8 +17,8 @@ interface ICafeSchema extends Document {
 
 export const CafeSchema: Schema = new Schema<ICafeSchema>({
   //Required
+  _id: { type: String, required: true },
   name: { type: String, required: true },
-  googleMapsPlaceID: { type: String, required: true },
   latitude: { type: Number, required: true },
   longitude: { type: Number, required: true },
   //Not required

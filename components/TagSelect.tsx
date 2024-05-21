@@ -9,6 +9,7 @@ export interface Tag {
   _id: string
   name: string
   description: string
+  rainbow: boolean
 }
 
 export const TagSelect: FC<TagSelectProps> = () => {
@@ -58,7 +59,7 @@ export const TagSelect: FC<TagSelectProps> = () => {
       </div>
       <div className='flex flex-wrap gap-2'>
         {Array.from(selectedTags).map((tag, i) => (
-          <CafeTag name={tag.name} onClick={() => removeTag(tag)} key={i} />
+          <CafeTag name={tag.name} onClick={() => removeTag(tag)} key={i} rainbow={tag.rainbow} />
         ))}
         {selectedTags.size == 0 && <div className='text-sm text-zinc-200'>Nie wybrano żadnych tagów</div>}
       </div>
@@ -94,7 +95,10 @@ export const TagSelect: FC<TagSelectProps> = () => {
                 key={i}
                 className='bg-zinc-900/75 hover:bg-zinc-950 p-2  cursor-pointer border-t first:border-0 border-zinc-800'
                 onClick={() => addTag(t)}>
-                <div className='text-zinc-100 text-sm leading-6 font-medium text-nowrap text-ellipsis overflow-hidden'>
+                <div
+                  className={`text-zinc-100 text-sm leading-6 font-medium text-nowrap text-ellipsis overflow-hidden ${
+                    t.rainbow && "animation-rainbow"
+                  }`}>
                   {t.name}
                 </div>
                 <div className='text-zinc-500 text-xs leading-5 font-normal'>{t.description}</div>
@@ -110,12 +114,15 @@ export const TagSelect: FC<TagSelectProps> = () => {
 interface CafeTagProps {
   name: string
   onClick: () => void
+  rainbow?: boolean
 }
 
-const CafeTag: FC<CafeTagProps> = ({ name, onClick }) => {
+const CafeTag: FC<CafeTagProps> = ({ name, onClick, rainbow }) => {
   return (
     <div
-      className='flex py-1 px-2 items-center gap-1 rounded-lg bg-zinc-900 flex-shrink-0 snap-start text-sm leading-4 font-medium'
+      className={`flex py-1 px-2 items-center gap-1 rounded-lg bg-zinc-900 flex-shrink-0 snap-start text-sm leading-4 font-medium ${
+        rainbow && "animation-rainbow"
+      }`}
       onClick={onClick}>
       <CircleX size={14} strokeWidth={2} /> {name}
     </div>

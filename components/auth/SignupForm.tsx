@@ -13,7 +13,7 @@ export default function SignupForm() {
 
   useEffect(() => {
     if (result && result.success)
-      setTimeout(() => router.push(`/login${result.email ? "?email=" + result.email : ""}`), 1000)
+      setTimeout(() => router.push(`/auth/login${result.email ? "?email=" + result.email : ""}`), 1000)
   }, [result, router])
 
   return (

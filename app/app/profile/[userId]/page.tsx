@@ -2,6 +2,7 @@ import { InfoLabel } from "@/components/InfoLabel"
 import { InfoRow } from "@/components/InfoRow"
 import { connectToDB } from "@/lib/dbConnect"
 import User from "@/models/User"
+import Image from "next/image"
 
 interface pageProps {
   params: { userId: string }
@@ -16,7 +17,7 @@ export default async function Page({ params }: pageProps) {
     <div className='flex flex-col gap-4 flex-grow'>
       {/* ICON */}
       <div className='w-32 h-32 mt-8 rounded-full border-[3px] border-zinc-400 overflow-hidden self-center flex-shrink-0'>
-        <img
+        <Image
           src='https://img.freepik.com/free-photo/cute-ai-generated-cartoon-bunny_23-2150288870.jpg'
           alt='User profile image'
           width={128}
@@ -32,16 +33,20 @@ export default async function Page({ params }: pageProps) {
         <div>
           <InfoLabel label='Ranking 🥇' linkText='Zobacz ranking' url='/app/profile/ranking' />
           <InfoRow label='Pozycja w rankingu' value='#1' />
-          <InfoRow label='Ilość punktów' value='42069' />
+          <InfoRow label='Ilość punktów' value='5' />
+        </div>
+        <div>
+          <InfoLabel label='Recenzje 📋' linkText='Zobacz wszystkie' url={`/app/profile/${user.id}/reviews`} />
+          <InfoRow label='Ilość recenzji' value={user.reviews.length} />
+          <InfoRow label='średnia ocena' value={user.avgRating} />
         </div>
         <div>
           <InfoLabel label='Statystyki 📋' />
-          <InfoRow label='Ilość recenzji' value='420' />
-          <InfoRow label='Ilość odwiedzonych kawiarni' value='69' />
+          <InfoRow label='Ilość odwiedzonych kawiarni' value='Not yet implementd' />
         </div>
         <div>
           <InfoLabel label='Osiągnięcia 🏆' />
-          <InfoRow label='Achivement name' value='10.03.2023' />
+          <InfoRow label='test' value='21.05.2023' />
         </div>
       </div>
     </div>

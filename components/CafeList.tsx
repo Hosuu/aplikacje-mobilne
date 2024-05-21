@@ -3,7 +3,8 @@
 import { CafeGetResponse } from "@/app/api/cafe/route"
 import { ClientContext } from "@/context/ClientContext"
 import { distanceInKmBetweenEarthCoordinates } from "@/lib/utils"
-import { LoaderCircle, MousePointer2, Plus, Search, Star } from "lucide-react"
+import { LoaderCircle, MousePointer2, Plus, Search, Star, X } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { FC, ReactNode, useContext, useEffect, useState } from "react"
 
@@ -18,8 +19,8 @@ export const CafeList: FC<CafeListProps> = ({}) => {
     if (serachValue.length > 0) {
       setFiltredCafe(
         cafes.filter((c) => {
-          if (c.name.includes(serachValue)) return true
-          if (c.tags.some((tag) => tag.name.includes(serachValue))) return true
+          if (c.name.toLowerCase().includes(serachValue.toLowerCase())) return true
+          if (c.tags.some((tag) => tag.name.toLowerCase().includes(serachValue.toLowerCase()))) return true
           return false
         })
       )
@@ -29,8 +30,8 @@ export const CafeList: FC<CafeListProps> = ({}) => {
   return (
     <div className='flex flex-col gap-2.5 flex-grow h-full overflow-y-auto'>
       <div className='sticky top-0 z-10 flex px-4 py-3 border-b border-zinc-500 bg-zinc-950'>
-        <div className='flex px-2 py-1 gap-2 flex-grow rounded-full bg-zinc-900'>
-          <Search size={24} />
+        <div className='flex px-2 py-1 gap-2 flex-grow rounded-full bg-zinc-900 '>
+          <Search size={24} className='shrink-0' />
           <input
             onChange={(e) => setSearchValue(e.target.value)}
             className='w-full bg-transparent outline-none text-zinc-100 placeholder:text-zinc-400 text-base leading-6 font-normal'
@@ -38,6 +39,9 @@ export const CafeList: FC<CafeListProps> = ({}) => {
             placeholder='Wyszukaj...'
             value={serachValue}
           />
+          {
+            serachValue.length > 0 && <X size={24} className='stroke-zinc-400 shrink-0' onClick={() => setSearchValue("")} /> /*prettier-ignore */
+          }
         </div>
       </div>
       <NewCafeElement />
@@ -61,7 +65,7 @@ export const CafeList: FC<CafeListProps> = ({}) => {
         })
         .sort((a, b) => a.distance - b.distance)
         .map(({ cafe, distance }) => (
-          <CafeListElement key={cafe.googleMapsPlaceID} cafe={cafe} distance={distance} />
+          <CafeListElement key={cafe._id} cafe={cafe} distance={distance} />
         ))}
     </div>
   )
@@ -93,18 +97,22 @@ const CafeListElement: FC<CafeListElementProps> = ({ cafe, distance }) => {
   }, [distance])
 
   return (
-    <Link href={`/app/cafe/${cafe.googleMapsPlaceID}`} className='flex p-4 gap-4 bg-zinc-950 '>
-      <img
-        className='w-16 h-16 rounded-full'
+    <Link href={`/app/cafe/${cafe._id}`} className='flex p-4 gap-4 bg-zinc-950 '>
+      <Image
+        className='rounded-full'
         src='https://img.freepik.com/free-photo/cute-ai-generated-cartoon-bunny_23-2150288870.jpg'
         alt='xD'
+        width={64}
+        height={64}
       />
 
       <div className='flex flex-col gap-2 flex-grow overflow-hidden'>
         <div className='flex justify-between'>
           <div className='text-zinc-100 text-lg leading-6 font-medium'>{cafe.name}</div>
           <div className='flex py-1 px-3 items-center gap-1 rounded-lg bg-zinc-900/75'>
-            <span className='text-sm leading-4 font-medium text-zinc-100'>{cafe.rating}</span>
+            <span className='text-sm leading-4 font-medium text-zinc-100'>
+              {cafe.rating ? cafe.rating : "Brak recenzji"}
+            </span>
             <Star className='fill-yellow-500 stroke-yellow-500' size={20} />
           </div>
         </div>
@@ -119,7 +127,7 @@ const CafeListElement: FC<CafeListElementProps> = ({ cafe, distance }) => {
             />
           )}
           {cafe.tags.map((tag) => (
-            <CafeTag key={tag.name} name={tag.name} />
+            <CafeTag key={tag.name} name={tag.name} rainbow={tag.rainbow} />
           ))}
         </CafeTagList>
       </div>
@@ -134,9 +142,7 @@ interface CafeTagListProps {
 const CafeTagList: FC<CafeTagListProps> = ({ children }) => {
   return (
     <div className='relative'>
-      <div className='text-zinc-300 flex gap-2 flex-nowrap overflow-x-auto pr-24 snap-x snap-mandatory snap-always'>
-        {children}
-      </div>
+      <div className=' flex gap-2 flex-nowrap overflow-x-auto pr-24 snap-x snap-mandatory snap-always'>{children}</div>
       <div className='absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-r from-transparent to-zinc-950'></div>
     </div>
   )
@@ -145,11 +151,15 @@ const CafeTagList: FC<CafeTagListProps> = ({ children }) => {
 interface CafeTagProps {
   name: string
   Icon?: ReactNode
+  rainbow?: boolean
 }
 
-const CafeTag: FC<CafeTagProps> = ({ name, Icon }) => {
+const CafeTag: FC<CafeTagProps> = ({ name, Icon, rainbow }) => {
   return (
-    <div className='flex py-1 px-3 items-center gap-1 rounded-lg bg-zinc-900/75 flex-shrink-0 snap-start text-sm leading-4 font-medium'>
+    <div
+      className={`flex py-1 px-3 items-center gap-1 rounded-lg bg-zinc-900/75 text-zinc-300 flex-shrink-0 snap-start text-sm leading-4 font-medium ${
+        rainbow && "animation-rainbow"
+      }`}>
       {Icon}
       {name}
     </div>

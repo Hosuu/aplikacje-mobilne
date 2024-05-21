@@ -1,9 +1,10 @@
 "use client"
 
 import { AddCafeReview } from "@/app/app/cafe/[cafeId]/addReview/actions"
+import { ClientContext } from "@/context/ClientContext"
 import { LoaderCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { FC, useEffect } from "react"
+import { FC, useContext, useEffect } from "react"
 import { useFormState, useFormStatus } from "react-dom"
 import FormInput from "./FormInput"
 import FormTextarea from "./FormTextarea"
@@ -22,10 +23,11 @@ interface AddReviewFormProps {
 export const AddCafeReviewForm: FC<AddReviewFormProps> = ({ place_id, name }) => {
   const router = useRouter()
   const [result, dispatch] = useFormState(AddCafeReview, undefined)
+  const { fetchCafe } = useContext(ClientContext)
 
   useEffect(() => {
-    if (result?.success) window.setTimeout(() => {router.back()}, 500) //prettier-ignore
-  }, [result, router, place_id])
+    if (result?.success) window.setTimeout(() => {router.back(); router.refresh(); fetchCafe();}, 500) //prettier-ignore
+  }, [result, router, place_id, fetchCafe])
 
   return (
     <div className='w-full flex-1 rounded-lg border p-6 pb-4 pt-8 bg-zinc-950 border-zinc-800'>
@@ -33,8 +35,8 @@ export const AddCafeReviewForm: FC<AddReviewFormProps> = ({ place_id, name }) =>
       <form action={dispatch} className='flex flex-col gap-2'>
         <input type='hidden' name='gPlaceId' value={place_id} />
         <FormInput type='text' name='' disabled defaultValue={name} label='Nazwa' />
-        <FormInput type='number' name='rating' min={0} max={5} defaultValue={"5"} label='Ocena' />
-        <FormTextarea name='desc' label='Opinia' placeholder='Wyraź swoją opinię...' />
+        <FormInput type='number' name='rating' min={0} max={5} defaultValue={"5"} required label='Ocena' />
+        <FormTextarea name='desc' required label='Opinia' placeholder='Wyraź swoją opinię...' />
         <AddCafeReviewButton disabled={!!result?.success} />
         <p className={`text-sm text-center ${result?.success ? "text-green-500" : "text-red-500"}`}>
           {result?.message}

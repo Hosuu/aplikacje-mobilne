@@ -19,12 +19,24 @@ body {
 }
 
 @layer utilities {
+  @keyframes rainbowText {
+    from {
+      filter: hue-rotate(0deg);
+    }
+    to {
+      filter: hue-rotate(360deg);
+    }
+  }
+
+  .animation-rainbow {
+    animation: rainbowText 3s linear infinite;
+    color: hsl(168, 100%, 57%);
+  }
+
   .text-balance {
     text-wrap: balance;
   }
-}
 
-@layer utilities {
   .pb-safe-main-view {
     padding-bottom: calc(1rem + env(safe-area-inset-bottom));
   }
