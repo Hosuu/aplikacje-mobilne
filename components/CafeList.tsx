@@ -3,7 +3,17 @@
 import { CafeGetResponse } from "@/app/api/cafe/route"
 import { ClientContext } from "@/context/ClientContext"
 import { distanceInKmBetweenEarthCoordinates } from "@/lib/utils"
-import { LoaderCircle, MousePointer2, Plus, Search, Star, X } from "lucide-react"
+import {
+  CalendarCheck,
+  ChevronRight,
+  LoaderCircle,
+  LockKeyhole,
+  MousePointer2,
+  Plus,
+  Search,
+  Star,
+  X,
+} from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { FC, ReactNode, useContext, useEffect, useState } from "react"
@@ -28,46 +38,60 @@ export const CafeList: FC<CafeListProps> = ({}) => {
   }, [serachValue, cafes])
 
   return (
-    <div className='flex flex-col gap-2.5 flex-grow h-full overflow-y-auto'>
-      <div className='sticky top-0 z-10 flex px-4 py-3 border-b border-zinc-500 bg-zinc-950'>
-        <div className='flex px-2 py-1 gap-2 flex-grow rounded-full bg-zinc-900 '>
-          <Search size={24} className='shrink-0' />
-          <input
-            onChange={(e) => setSearchValue(e.target.value)}
-            className='w-full bg-transparent outline-none text-zinc-100 placeholder:text-zinc-400 text-base leading-6 font-normal'
-            type='text'
-            placeholder='Wyszukaj...'
-            value={serachValue}
-          />
-          {
-            serachValue.length > 0 && <X size={24} className='stroke-zinc-400 shrink-0' onClick={() => setSearchValue("")} /> /*prettier-ignore */
-          }
+    <>
+      <div className='flex flex-col gap-2.5 flex-grow h-full overflow-y-auto'>
+        <div className='sticky top-0 z-10 flex px-4 py-3 border-b border-zinc-500 bg-zinc-950'>
+          <div className='flex px-2 py-1 gap-2 flex-grow rounded-full bg-zinc-900 '>
+            <Search size={24} className='shrink-0' />
+            <input
+              onChange={(e) => setSearchValue(e.target.value)}
+              className='w-full bg-transparent outline-none text-zinc-100 placeholder:text-zinc-400 text-base leading-6 font-normal'
+              type='text'
+              placeholder='Wyszukaj...'
+              value={serachValue}
+            />
+            {
+              serachValue.length > 0 && <X size={24} className='stroke-zinc-400 shrink-0' onClick={() => setSearchValue("")} /> /*prettier-ignore */
+            }
+          </div>
         </div>
+        <NewCafeElement />
+        {isLoadingCafes && (
+          <div className='flex flex-col items-center'>
+            <LoaderCircle className='animate-spin stroke-zinc-400' size={48} />
+            <div className='text-sm leading-5 font-normal mt-4 text-zinc-400'>Wczytuje kawiarnie...</div>
+          </div>
+        )}
+        {filtredCafe
+          .map((cafe) => {
+            const distance = geolocationPosition
+              ? distanceInKmBetweenEarthCoordinates(
+                  geolocationPosition.coords.latitude,
+                  geolocationPosition.coords.longitude,
+                  cafe.latitude,
+                  cafe.longitude
+                )
+              : -1
+            return { cafe, distance }
+          })
+          .sort((a, b) => a.distance - b.distance)
+          .map(({ cafe, distance }) => (
+            <CafeListElement key={cafe._id} cafe={cafe} distance={distance} />
+          ))}
       </div>
-      <NewCafeElement />
-      {isLoadingCafes && (
-        <div className='flex flex-col items-center'>
-          <LoaderCircle className='animate-spin stroke-zinc-400' size={48} />
-          <div className='text-sm leading-5 font-normal mt-4 text-zinc-400'>Wczytuje kawiarnie...</div>
+      <Link
+        tabIndex={!geolocationPosition ? -1 : undefined}
+        style={!geolocationPosition ? { pointerEvents: "none" } : undefined}
+        href={"/app/visit"}
+        className='flex p-4 pb-6 justify-between items-center border-t border-zinc-500 bg-zinc-950 pb-safe-main-view'>
+        <div className='flex gap-2 flex-grow'>
+          <CalendarCheck size={24} strokeWidth={1.5} />
+          <div className='text-zinc-100 text-base leading-6 font-medium'>Dodaj wizytę </div>
         </div>
-      )}
-      {filtredCafe
-        .map((cafe) => {
-          const distance = geolocationPosition
-            ? distanceInKmBetweenEarthCoordinates(
-                geolocationPosition.coords.latitude,
-                geolocationPosition.coords.longitude,
-                cafe.latitude,
-                cafe.longitude
-              )
-            : -1
-          return { cafe, distance }
-        })
-        .sort((a, b) => a.distance - b.distance)
-        .map(({ cafe, distance }) => (
-          <CafeListElement key={cafe._id} cafe={cafe} distance={distance} />
-        ))}
-    </div>
+        {!geolocationPosition && <span className='text-zinc-400 text-xs mr-2'>(Wymaga usług lokalizacyjnych)</span>}
+        {geolocationPosition ? <ChevronRight size={24} /> : <LockKeyhole className='stroke-zinc-400' size={24} />}
+      </Link>
+    </>
   )
 }
 
@@ -108,7 +132,9 @@ const CafeListElement: FC<CafeListElementProps> = ({ cafe, distance }) => {
 
       <div className='flex flex-col gap-2 flex-grow overflow-hidden'>
         <div className='flex justify-between'>
-          <div className='text-zinc-100 text-lg leading-6 font-medium'>{cafe.name}</div>
+          <div className='text-zinc-100 text-lg leading-6 font-medium text-ellipsis text-nowrap overflow-hidden'>
+            {cafe.name}
+          </div>
           <div className='flex py-1 px-3 items-center gap-1 rounded-lg bg-zinc-900/75'>
             <span className='text-sm leading-4 font-medium text-zinc-100'>
               {cafe.rating ? cafe.rating : "Brak recenzji"}

@@ -19,7 +19,7 @@ export default async function Page({ params }: pageProps) {
   const reviews = user.reviews as Pick<IReviewSchema, "rating" | "timeStamp" | "text" | "score" | "cafeId">[]
 
   return (
-    <div>
+    <div className='flex flex-col gap-4 p-4 bg-zinc-950 flex-grow'>
       {reviews.map((r: any) => (
         <CafeReview
           label={r.cafeId!.name}

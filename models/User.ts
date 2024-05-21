@@ -10,7 +10,7 @@ export interface IUserSchema extends Document {
   avgRating: number
   points: number
   rank: number
-  visitedCafes: mongoose.PopulatedDoc<ICafeSchema>[]
+  visits: { cafe: mongoose.PopulatedDoc<ICafeSchema>; timeStamp: number }[]
 }
 
 const UserSchema: Schema = new Schema({
@@ -21,7 +21,9 @@ const UserSchema: Schema = new Schema({
   avgRating: { type: Number, default: 0 },
   points: { type: Number, default: 0 },
   rank: { type: Number, default: 0 },
-  visitedCafes: [{ type: Schema.Types.ObjectId, ref: "Cafe" }],
+  visits: [
+    { cafe: { type: Schema.Types.ObjectId, ref: "Cafe" }, timeStamp: { type: Number, default: () => Date.now() } },
+  ],
 })
 
 const User = (models?.User as Model<IUserSchema>) || model<IUserSchema>("User", UserSchema)

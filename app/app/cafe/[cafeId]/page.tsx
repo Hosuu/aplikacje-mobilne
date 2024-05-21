@@ -56,7 +56,7 @@ export default async function Page({ params }: pageProps) {
       </div>
 
       {/* CAFE NAME */}
-      <div className='text-3xl leading-10 font-extrabold self-center'>{name}</div>
+      <div className='text-3xl leading-10 font-extrabold self-center text-center'>{name}</div>
 
       {/* USER INFO */}
       <div className='w-full flex-grow p-4 flex flex-col gap-8 rounded-t-2xl bg-zinc-950'>

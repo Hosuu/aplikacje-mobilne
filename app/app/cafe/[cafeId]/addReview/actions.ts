@@ -48,6 +48,7 @@ export async function AddCafeReview(currentState: any, formData: FormData): Prom
     await cafe.save()
     //
   } catch (e) {
+    console.log(e)
     return {
       success: false,
       message: JSON.stringify(e),
