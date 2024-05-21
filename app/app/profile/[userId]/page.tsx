@@ -13,9 +13,9 @@ export default async function Page({ params }: pageProps) {
   if (user === null) return <div> USER NOT FOUND</div>
 
   return (
-    <>
+    <div className='flex flex-col gap-4 flex-grow'>
       {/* ICON */}
-      <div className='w-32 h-32 rounded-full border-[3px] border-zinc-400 overflow-hidden self-center flex-shrink-0'>
+      <div className='w-32 h-32 mt-8 rounded-full border-[3px] border-zinc-400 overflow-hidden self-center flex-shrink-0'>
         <img
           src='https://img.freepik.com/free-photo/cute-ai-generated-cartoon-bunny_23-2150288870.jpg'
           alt='User profile image'
@@ -44,6 +44,6 @@ export default async function Page({ params }: pageProps) {
           <InfoRow label='Achivement name' value='10.03.2023' />
         </div>
       </div>
-    </>
+    </div>
   )
 }

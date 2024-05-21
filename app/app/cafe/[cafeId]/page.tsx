@@ -2,6 +2,8 @@ import { CafeReviewBody } from "@/components/CafeReviewBody"
 import { InfoLabel } from "@/components/InfoLabel"
 import { InfoRow } from "@/components/InfoRow"
 import { OpeningHours } from "@/components/OpeningHours"
+import { connectToDB } from "@/lib/dbConnect"
+import Cafe from "@/models/Cafe"
 import { Compass, Globe, LucideIcon, Phone, Star } from "lucide-react"
 import Link from "next/link"
 import { FC } from "react"
@@ -11,10 +13,9 @@ interface pageProps {
 }
 
 export default async function Page({ params }: pageProps) {
-  // if (!mongoose.Types.ObjectId.isValid(params.cafeId)) return <div>{params.cafeId} is not proper cafe id</div>
-  // await connectToDB()
-  // const cafe = await Cafe.findOne({ googleMapsPlaceID: params.cafeId })
-  // if (cafe === null) return <div>CAFE NOT FOUND</div>
+  await connectToDB()
+  const cafe = await Cafe.findOne({ googleMapsPlaceID: params.cafeId })
+  if (cafe === null) return <div>CAFE NOT FOUND</div>
 
   const gMapsResponse = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${params.cafeId}&key=${process.env.GMAPS_API_KEY}&language=pl&fields=name,international_phone_number,opening_hours,website,url,serves_beer,price_level,reviews,formatted_address`, {
     // cache: "force-cache",
@@ -31,9 +32,9 @@ export default async function Page({ params }: pageProps) {
   const beer = gMapsDetails.result?.serves_beer
 
   return (
-    <>
+    <div className='flex flex-col gap-4'>
       {/* CAFE LOGO */}
-      <div className='w-32 h-32 rounded-full border-[3px] border-zinc-400 overflow-hidden self-center flex-shrink-0'>
+      <div className='w-32 h-32 mt-8 rounded-full border-[3px] border-zinc-400 overflow-hidden self-center flex-shrink-0'>
         <img
           src='https://img.freepik.com/free-photo/cute-ai-generated-cartoon-bunny_23-2150288870.jpg'
           alt='User profile image'
@@ -61,7 +62,7 @@ export default async function Page({ params }: pageProps) {
             label='Ocena'
             value={
               <>
-                4.2
+                {cafe.reviews.length > 0 ? `${cafe.rating}(${cafe.reviews.length})` : "Brak recenzji"}
                 <Star className='fill-yellow-500 stroke-yellow-500' />
               </>
             }
@@ -84,7 +85,7 @@ export default async function Page({ params }: pageProps) {
           ))}
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

@@ -3,11 +3,22 @@ import { connectToDB } from "@/lib/dbConnect"
 import Cafe from "@/models/Cafe"
 import Tag from "@/models/Tag"
 
+export interface CafeGetResponse {
+  name: string
+  rating: number
+  tags: { name: string }[]
+  latitude: number
+  longitude: number
+  googleMapsPlaceID: string
+}
+
 export const GET = auth(async (req) => {
   if (req.auth === null) return new Response("Not authorized", { status: 403 })
 
   await connectToDB()
-  const cafes = await Cafe.find().populate(Tag.collection.name)
+  const cafes = await Cafe.find()
+    .populate(Tag.collection.name, ["-_id", "name"])
+    .select(["-_id", "name", "rating", "tags", "latitude", "longitude", "googleMapsPlaceID"])
   return new Response(JSON.stringify(cafes))
 })
 

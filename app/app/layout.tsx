@@ -10,7 +10,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   return (
     <>
       <Navbar />
-      <main className='flex flex-col w-full  max-w-[512px] mx-auto h-full gap-4 pt-[73px]'>
+      <main className='flex flex-col w-full  max-w-[512px] mx-auto h-full pt-[73px] overflow-y-auto'>
         <ClientContextProvider>{children}</ClientContextProvider>
       </main>
     </>

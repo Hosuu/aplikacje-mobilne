@@ -40,7 +40,7 @@ export default function LoginForm() {
           {result?.message}
         </p>
       </div>
-      <Link href='/signup' className='flex flex-row gap-1 text-sm text-zinc-400'>
+      <Link href='/auth/signup' className='flex flex-row gap-1 text-sm text-zinc-400'>
         Nie posiadasz konta? <span className='font-semibold underline'>Zarejestruj się</span>
       </Link>
     </form>

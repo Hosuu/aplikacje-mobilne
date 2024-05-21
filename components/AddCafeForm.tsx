@@ -1,9 +1,10 @@
 "use client"
 
 import { AddCafe } from "@/app/app/cafe/new/actions"
+import { ClientContext } from "@/context/ClientContext"
 import { LoaderCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { FC, useEffect, useRef, useState } from "react"
+import { FC, useContext, useEffect, useRef, useState } from "react"
 import { useFormState, useFormStatus } from "react-dom"
 import FormInput from "./FormInput"
 import FormTextarea from "./FormTextarea"
@@ -20,6 +21,7 @@ export default function AddCafeForm() {
   const [placeInputValue, setPlaceInputValue] = useState<string>("")
   const [completions, setCompletions] = useState<GooglePlace[]>([])
   const deboundeTimeout = useRef<number>(-1)
+  const { fetchCafe } = useContext(ClientContext)
   const getCompletions = (input: string) => {
     if (input.length < 3) {
       setCompletions([])
@@ -39,8 +41,8 @@ export default function AddCafeForm() {
   const [result, dispatch] = useFormState(AddCafe, undefined)
 
   useEffect(() => {
-    if (result?.criticalError) window.setTimeout(() => {router.back()}, 500) //prettier-ignore
-    if (result?.success) window.setTimeout(() => {router.replace(`/app/cafe/${googlePlace?.place_id}`)}, 500) //prettier-ignore
+    if (result?.criticalError) window.setTimeout(() => { router.back()}, 500) //prettier-ignore
+    if (result?.success) window.setTimeout(() => {fetchCafe(); router.replace(`/app/cafe/${googlePlace?.place_id}`)}, 500) //prettier-ignore
   }, [result, router, googlePlace])
 
   //Pre form state render

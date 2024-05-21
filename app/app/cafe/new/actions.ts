@@ -71,7 +71,7 @@ export async function AddCafe(currentState: any, formData: FormData): Promise<Ad
   }
 
   return {
-    success: false,
+    success: true,
     criticalError: false,
     message: "Pomyslnie dodano kawiarnie!",
   }

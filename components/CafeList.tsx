@@ -1,34 +1,30 @@
 "use client"
 
+import { CafeGetResponse } from "@/app/api/cafe/route"
 import { ClientContext } from "@/context/ClientContext"
 import { distanceInKmBetweenEarthCoordinates } from "@/lib/utils"
-import Cafe from "@/models/Cafe"
-import { MousePointer2, Plus, Search, Star } from "lucide-react"
+import { LoaderCircle, MousePointer2, Plus, Search, Star } from "lucide-react"
 import Link from "next/link"
 import { FC, ReactNode, useContext, useEffect, useState } from "react"
-import { Tag } from "./TagSelect"
 
 interface CafeListProps {}
-interface Cafe {
-  _id: string
-  name: string
-  rating: number
-  tags: Tag[]
-  latitude: number
-  longitude: number
-}
 
 export const CafeList: FC<CafeListProps> = ({}) => {
-  const [availableCafe, setAvailableCafe] = useState<Cafe[]>([])
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const { cafes, isLoadingCafes, geolocationPosition } = useContext(ClientContext)
   const [serachValue, setSearchValue] = useState<string>("")
+  const [filtredCafe, setFiltredCafe] = useState<CafeGetResponse[]>([])
 
   useEffect(() => {
-    ;(async () => {
-      setAvailableCafe(await (await fetch("/api/cafe")).json())
-      setIsLoading(false)
-    })()
-  }, [])
+    if (serachValue.length > 0) {
+      setFiltredCafe(
+        cafes.filter((c) => {
+          if (c.name.includes(serachValue)) return true
+          if (c.tags.some((tag) => tag.name.includes(serachValue))) return true
+          return false
+        })
+      )
+    } else setFiltredCafe([...cafes])
+  }, [serachValue, cafes])
 
   return (
     <div className='flex flex-col gap-2.5 flex-grow h-full overflow-y-auto'>
@@ -45,11 +41,27 @@ export const CafeList: FC<CafeListProps> = ({}) => {
         </div>
       </div>
       <NewCafeElement />
-      {isLoading && <div>LOADING...</div>}
-      {availableCafe
-        .filter((cafe) => cafe.name.startsWith(serachValue))
-        .map((cafe) => (
-          <CafeListElement key={cafe._id} cafe={cafe} />
+      {isLoadingCafes && (
+        <div className='flex flex-col items-center'>
+          <LoaderCircle className='animate-spin stroke-zinc-400' size={48} />
+          <div className='text-sm leading-5 font-normal mt-4 text-zinc-400'>Wczytuje kawiarnie...</div>
+        </div>
+      )}
+      {filtredCafe
+        .map((cafe) => {
+          const distance = geolocationPosition
+            ? distanceInKmBetweenEarthCoordinates(
+                geolocationPosition.coords.latitude,
+                geolocationPosition.coords.longitude,
+                cafe.latitude,
+                cafe.longitude
+              )
+            : -1
+          return { cafe, distance }
+        })
+        .sort((a, b) => a.distance - b.distance)
+        .map(({ cafe, distance }) => (
+          <CafeListElement key={cafe.googleMapsPlaceID} cafe={cafe} distance={distance} />
         ))}
     </div>
   )
@@ -70,28 +82,18 @@ const NewCafeElement = () => {
   )
 }
 interface CafeListElementProps {
-  cafe: Cafe
+  cafe: CafeGetResponse
+  distance: number
 }
-const CafeListElement: FC<CafeListElementProps> = ({ cafe }) => {
-  const { geolocationPosition } = useContext(ClientContext)
+const CafeListElement: FC<CafeListElementProps> = ({ cafe, distance }) => {
+  const [isMeterScae, setIsMeterScale] = useState<boolean>(false)
 
-  let distance = 0
-  let isMeterScale = false
-  if (geolocationPosition) {
-    distance = distanceInKmBetweenEarthCoordinates(
-      geolocationPosition?.coords.latitude ?? 0,
-      geolocationPosition?.coords.longitude ?? 0,
-      cafe.latitude,
-      cafe.longitude
-    )
-    if (distance < 1000) {
-      isMeterScale = true
-      distance *= 1000
-    }
-  }
+  useEffect(() => {
+    if (distance != -1) setIsMeterScale(Boolean(distance < 1))
+  }, [distance])
 
   return (
-    <Link href='/app/cafe/cafeId' className='flex p-4 gap-4 bg-zinc-950 '>
+    <Link href={`/app/cafe/${cafe.googleMapsPlaceID}`} className='flex p-4 gap-4 bg-zinc-950 '>
       <img
         className='w-16 h-16 rounded-full'
         src='https://img.freepik.com/free-photo/cute-ai-generated-cartoon-bunny_23-2150288870.jpg'
@@ -108,16 +110,16 @@ const CafeListElement: FC<CafeListElementProps> = ({ cafe }) => {
         </div>
 
         <CafeTagList>
-          {geolocationPosition && (
+          {distance != -1 && (
             <CafeTag
               Icon={<MousePointer2 className='fill-zinc-300 stroke-zinc-300' size={20} />}
-              name={`${new Intl.NumberFormat("pl-PL", { maximumSignificantDigits: 3 }).format(distance)} ${
-                isMeterScale ? "m" : "Km"
-              }`}
+              name={`${new Intl.NumberFormat("pl-PL", { maximumSignificantDigits: 3 }).format(
+                isMeterScae ? distance * 1000 : distance
+              )} ${isMeterScae ? "m" : "Km"}`}
             />
           )}
           {cafe.tags.map((tag) => (
-            <CafeTag key={tag._id} name={tag.name} />
+            <CafeTag key={tag.name} name={tag.name} />
           ))}
         </CafeTagList>
       </div>
