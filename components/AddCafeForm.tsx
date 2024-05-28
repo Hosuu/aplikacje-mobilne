@@ -1,7 +1,7 @@
 "use client"
 
 import { AddCafe } from "@/app/app/cafe/new/actions"
-import { ClientContext } from "@/context/ClientContext"
+import { ClientContext } from "@/contexts/ClientContext"
 import { LoaderCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { FC, useContext, useEffect, useRef, useState } from "react"

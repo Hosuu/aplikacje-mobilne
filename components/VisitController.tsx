@@ -1,7 +1,7 @@
 "use client"
 
 import { CafeGetResponse } from "@/app/api/cafe/route"
-import { ClientContext } from "@/context/ClientContext"
+import { ClientContext } from "@/contexts/ClientContext"
 import { distanceInKmBetweenEarthCoordinates } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import { FC, useContext, useEffect, useState } from "react"

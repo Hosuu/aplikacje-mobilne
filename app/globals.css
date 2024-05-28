@@ -9,7 +9,7 @@
   user-select: none;
 }
 
-::-webkit-scrollbar {
+:not(textarea)::-webkit-scrollbar {
   display: none;
 }
 

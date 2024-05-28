@@ -1,7 +1,7 @@
 "use client"
 
 import { AddCafeReview } from "@/app/app/cafe/[cafeId]/addReview/actions"
-import { ClientContext } from "@/context/ClientContext"
+import { ClientContext } from "@/contexts/ClientContext"
 import { LoaderCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { FC, useContext, useEffect } from "react"
@@ -23,11 +23,11 @@ interface AddReviewFormProps {
 export const AddCafeReviewForm: FC<AddReviewFormProps> = ({ place_id, name }) => {
   const router = useRouter()
   const [result, dispatch] = useFormState(AddCafeReview, undefined)
-  const { updateCafeList: fetchCafe } = useContext(ClientContext)
+  const { updateCafeList } = useContext(ClientContext)
 
   useEffect(() => {
-    if (result?.success) window.setTimeout(() => {router.back(); router.refresh(); fetchCafe();}, 500) //prettier-ignore
-  }, [result, router, place_id, fetchCafe])
+    if (result?.success) window.setTimeout(() => {router.back(); router.refresh(); updateCafeList();}, 500) //prettier-ignore
+  }, [result, router, place_id, updateCafeList])
 
   return (
     <div className='w-full flex-1 rounded-lg border p-6 pb-4 pt-8 bg-zinc-950 border-zinc-800'>

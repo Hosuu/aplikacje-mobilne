@@ -50,7 +50,7 @@ export async function signInAction(currentState: any, formData: FormData): Promi
         case "CredentialsSignin":
           return {
             success: false,
-            message: "Błędne hasło",
+            message: "Błędne hasłoo",
           }
         default:
           return {

@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/Navbar"
-import { ClientContextProvider } from "@/context/ClientContext"
+import { ClientContextProvider } from "@/contexts/ClientContext"
 import { ReactNode } from "react"
 
 interface AppLayoutProps {
