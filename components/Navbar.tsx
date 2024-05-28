@@ -23,11 +23,9 @@ export const Navbar: FC = () => {
       <div className='flex flex-row p-4 justify-between items-center border-b border-zinc-500 border-solid bg-zinc-950 w-full  max-w-[512px] mx-auto'>
         {isAppRootDir ? profileBtn : returnBtn}
         <div className='text-4xl leading-10 font-medium text-white select-none'>WroKawka</div>
-        <form action={signOutAction}>
-          <button tabIndex={-1}>
-            <NavbarButton IconElement={LogOut} />
-          </button>
-        </form>
+        <button onClick={async () => await signOutAction()}>
+          <NavbarButton IconElement={LogOut} />
+        </button>
       </div>
     </div>
   )

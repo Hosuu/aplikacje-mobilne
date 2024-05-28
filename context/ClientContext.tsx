@@ -18,7 +18,7 @@ interface ClientContextSchema {
   cafes: CafeGetResponse[]
   isLoadingCafes: boolean
   setIsLoadingCafes: Dispatch<SetStateAction<boolean>>
-  fetchCafe: () => void
+  updateCafeList: () => void
 }
 
 export const ClientContext = createContext<ClientContextSchema>({
@@ -26,7 +26,7 @@ export const ClientContext = createContext<ClientContextSchema>({
   cafes: [],
   isLoadingCafes: true,
   setIsLoadingCafes: () => null,
-  fetchCafe: () => null,
+  updateCafeList: () => null,
 })
 
 interface ClientContextProviderProps {
@@ -38,7 +38,7 @@ export const ClientContextProvider: FC<ClientContextProviderProps> = ({ children
   const [isLoadingCafes, setIsLoadingCafes] = useState<boolean>(true)
   const [cafes, setCafes] = useState<CafeGetResponse[]>([])
 
-  const fetchCafe = useMemo(
+  const updateCafeList = useMemo(
     () => async () => {
       setCafes((await (await fetch("/api/cafe")).json()) as CafeGetResponse[])
       setIsLoadingCafes(false)
@@ -47,15 +47,15 @@ export const ClientContextProvider: FC<ClientContextProviderProps> = ({ children
   )
 
   useEffect(() => {
-    fetchCafe()
-  }, [fetchCafe])
+    updateCafeList()
+  }, [updateCafeList])
 
   useLayoutEffect(() => {
     navigator.geolocation.getCurrentPosition(setGeolocationPosition)
   }, [])
 
   return (
-    <ClientContext.Provider value={{ geolocationPosition, cafes, isLoadingCafes, setIsLoadingCafes, fetchCafe }}>
+    <ClientContext.Provider value={{ geolocationPosition, cafes, isLoadingCafes, setIsLoadingCafes, updateCafeList }}>
       {children}
     </ClientContext.Provider>
   )

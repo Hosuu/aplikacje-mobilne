@@ -1,6 +1,6 @@
 "use client"
 
-import { authenticate } from "@/app/auth/login/actions"
+import { signInAction } from "@/app/auth/login/actions"
 import { LoaderCircle, LogIn } from "lucide-react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -10,7 +10,7 @@ import FormInput from "../FormInput"
 
 export default function LoginForm() {
   const router = useRouter()
-  const [result, dispatch] = useFormState(authenticate, undefined)
+  const [result, dispatch] = useFormState(signInAction, undefined)
 
   const searchParams = useSearchParams()
   const email = searchParams.get("email") ?? undefined

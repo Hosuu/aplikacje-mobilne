@@ -21,7 +21,7 @@ export default function AddCafeForm() {
   const [placeInputValue, setPlaceInputValue] = useState<string>("")
   const [completions, setCompletions] = useState<GooglePlace[]>([])
   const deboundeTimeout = useRef<number>(-1)
-  const { fetchCafe } = useContext(ClientContext)
+  const { updateCafeList } = useContext(ClientContext)
   const getCompletions = (input: string) => {
     if (input.length < 3) {
       setCompletions([])
@@ -43,8 +43,8 @@ export default function AddCafeForm() {
 
   useEffect(() => {
     if (result?.criticalError) window.setTimeout(() => { router.back()}, 1000) //prettier-ignore
-    if (result?.success) window.setTimeout(() => {fetchCafe(); router.replace(`/app/cafe/${googlePlace?.place_id}`)}, 500) //prettier-ignore
-  }, [result, router, googlePlace, fetchCafe])
+    if (result?.success) window.setTimeout(() => {updateCafeList(); router.replace(`/app/cafe/${googlePlace?.place_id}`)}, 500) //prettier-ignore
+  }, [result, router, googlePlace, updateCafeList])
 
   //Pre form state render
   if (googlePlace === null) {

@@ -23,7 +23,7 @@ interface AddReviewFormProps {
 export const AddCafeReviewForm: FC<AddReviewFormProps> = ({ place_id, name }) => {
   const router = useRouter()
   const [result, dispatch] = useFormState(AddCafeReview, undefined)
-  const { fetchCafe } = useContext(ClientContext)
+  const { updateCafeList: fetchCafe } = useContext(ClientContext)
 
   useEffect(() => {
     if (result?.success) window.setTimeout(() => {router.back(); router.refresh(); fetchCafe();}, 500) //prettier-ignore

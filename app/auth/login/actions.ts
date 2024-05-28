@@ -17,7 +17,7 @@ interface AuthenticateRessult {
   message: string
 }
 
-export async function authenticate(currentState: any, formData: FormData): Promise<AuthenticateRessult | undefined> {
+export async function signInAction(currentState: any, formData: FormData): Promise<AuthenticateRessult | undefined> {
   try {
     const email = formData.get("email")
     const password = formData.get("password")
