@@ -57,7 +57,7 @@ export default async function Page({ params }: pageProps) {
           <div>
             <InfoLabel label='Wizyty 📅' />
             {visits.map((visit) => {
-              const dateString = new Date(visit.timeStamp).toLocaleDateString()
+              const dateString = new Date(visit.timeStamp).toLocaleDateString("pl-PL")
               return <InfoRow key={visit._id} label={visit.cafe.name} value={dateString} />
             })}
           </div>
