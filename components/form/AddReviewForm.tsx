@@ -19,8 +19,8 @@ export const AddReviewForm: FC<AddReviewFormProps> = ({ place_id, name }) => {
   const [result, dispatch] = useFormState(addReviewFormAction, undefined)
 
   useEffect(() => {
-    if (result && result.finalResult?.settled) window.setTimeout(() => router.back(), 500)
-  }, [result, router])
+    if (result && result.finalResult?.settled) window.setTimeout(() => router.replace(`/app/cafe/${place_id}`), 500)
+  }, [result, router, place_id])
 
   return (
     <FormWrapper label='Dodaj recenzje' result={result} action={dispatch} className='w-full mt-3'>

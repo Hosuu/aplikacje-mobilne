@@ -15,6 +15,18 @@ const config: Config = {
     },
   },
   plugins: [],
-  safelist: ["border-red-500", "border-green-500", "border-zinc-800", "bg-zinc-100", "bg-green-500", "bg-red-500"],
+  safelist: [
+    "border-red-500",
+    "border-green-500",
+    "border-zinc-800",
+    "bg-zinc-100",
+    "bg-green-500",
+    "bg-red-500",
+    "from-zinc-900/50",
+    "from-zinc-800",
+    "from-yellow-500",
+    "from-gray-500",
+    "from-yellow-900",
+  ],
 }
 export default config
