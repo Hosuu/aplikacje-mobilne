@@ -106,7 +106,7 @@ export default async function Page({ params }: pageProps) {
         </div>
 
         <div className='flex flex-col gap-3'>
-          <InfoLabel label='Recenzje Google | temporary' />
+          <InfoLabel label='Recenzje Google' />
           {reviews.map((r: any, i: number) => (
             <CafeReviewGoogle
               rating={r.rating}

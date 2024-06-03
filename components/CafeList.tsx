@@ -123,7 +123,7 @@ const CafeListElement: FC<CafeListElementProps> = ({ cafe, distance }) => {
   return (
     <Link href={`/app/cafe/${cafe._id}`} className='flex p-4 gap-4 bg-zinc-950 '>
       <Image
-        className='rounded-full'
+        className='rounded-full self-center'
         src='https://img.freepik.com/free-photo/cute-ai-generated-cartoon-bunny_23-2150288870.jpg'
         alt='xD'
         width={64}
@@ -136,8 +136,8 @@ const CafeListElement: FC<CafeListElementProps> = ({ cafe, distance }) => {
             {cafe.name}
           </div>
           <div className='flex py-1 px-3 items-center gap-1 rounded-lg bg-zinc-900/75'>
-            <span className='text-sm leading-4 font-medium text-zinc-100'>
-              {cafe.rating ? cafe.rating : "Brak recenzji"}
+            <span className='text-sm leading-4 font-medium text-zinc-100 text-nowrap'>
+              {cafe.rating ? cafe.rating.toFixed(1) : "Brak recenzji"}
             </span>
             <Star className='fill-yellow-500 stroke-yellow-500' size={20} />
           </div>

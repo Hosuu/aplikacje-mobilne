@@ -4,6 +4,7 @@ export interface ICafeSchema extends Document {
   //Required
   _id: string
   name: string
+  address: string
   latitude: number
   longitude: number
   //Not required
@@ -19,6 +20,7 @@ export const CafeSchema: Schema = new Schema<ICafeSchema>({
   //Required
   _id: { type: String, required: true },
   name: { type: String, required: true },
+  address: { type: String, required: true },
   latitude: { type: Number, required: true },
   longitude: { type: Number, required: true },
   //Not required

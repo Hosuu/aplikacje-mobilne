@@ -8,7 +8,6 @@ interface signUpFormResponse extends FieldStateMap {}
 
 export async function signUpFormAction(currentState: any, formData: FormData): Promise<signUpFormResponse> {
   const formState = new FieldStateBuilder()
-
   try {
     const email = formData.get("email")
     const password = formData.get("password")
@@ -26,6 +25,7 @@ export async function signUpFormAction(currentState: any, formData: FormData): P
 
     const user = new User({ username, email, password })
     await user.save()
+    formState.setExtraData({ email })
     formState.setFinalResult("SUCCESS", "Pomyślnie utworzono użytkownika!", true)
   } catch (e) {
     console.error(e)

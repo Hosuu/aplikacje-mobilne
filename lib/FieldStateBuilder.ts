@@ -5,7 +5,10 @@ export interface FieldState {
   message: string
 }
 
-export type FieldStateMap = Partial<Record<string, FieldState>> & { finalResult?: FieldState & { settled: boolean } }
+export type FieldStateMap = Partial<Record<string, FieldState>> & {
+  finalResult?: FieldState & { settled: boolean }
+  _extraData?: any
+}
 
 export const statusAccentMap: Record<FieldStatus, string | undefined> = {
   DEFAULT: undefined,
@@ -31,6 +34,10 @@ export default class FieldStateBuilder {
 
   public hasAnyErrorFields(): boolean {
     return Object.values(this.fields).some((s) => s!.state === "ERROR")
+  }
+
+  public setExtraData(data: any): void {
+    this.fields._extraData = data
   }
 
   public get jsonObject() {

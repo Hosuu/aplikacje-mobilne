@@ -18,7 +18,10 @@ export const SignUpForm: FC<SignUpFormProps> = () => {
   useEffect(() => {
     if (result && result.finalResult?.settled) {
       if (result.finalResult.state === "SUCCESS")
-        setTimeout(() => router.push(`/auth/login/${result.email ? "?email=" + result.email : ""}`), 750)
+        setTimeout(
+          () => router.push(`/auth/login/new${result._extraData.email ? "?email=" + result._extraData.email : ""}`),
+          750
+        )
     }
   }, [result, router])
 

@@ -57,7 +57,7 @@ export const SignInForm: FC<SignInFormProps> = () => {
         <SubmitButton label='Zaloguj' />
       </FormWrapper>
 
-      <Link href='/auth/signup' className='mt-6 flex flex-row gap-1 text-sm text-center text-zinc-400'>
+      <Link href='/auth/signup/new' className='mt-6 flex flex-row gap-1 text-sm text-center text-zinc-400'>
         Nie posiadasz konta? <span className='font-semibold underline'>Zarejestruj się</span>
       </Link>
     </div>

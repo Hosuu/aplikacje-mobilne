@@ -42,10 +42,11 @@ export async function AddCafe(currentState: any, formData: FormData): Promise<Ad
   }
 
   try {
-    const gMapsResponse = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${gPlaceId}&key=${process.env.GMAPS_API_KEY}&language=pl&fields=name,geometry`) //prettier-ignore
+    const gMapsResponse = await fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${gPlaceId}&key=${process.env.GMAPS_API_KEY}&language=pl&fields=name,geometry,formatted_address`) //prettier-ignore
     const gMapsData = await gMapsResponse.json()
     if(gMapsData?.result?.geometry?.location == undefined || gMapsData?.result?.name == undefined) throw new Error("GoogleMaps API error") //prettier-ignore
     const name = gMapsData.result.name
+    const address = gMapsData.result.formatted_address
     const latitude = gMapsData.result.geometry.location.lat
     const longitude = gMapsData.result.geometry.location.lng
 
@@ -53,6 +54,7 @@ export async function AddCafe(currentState: any, formData: FormData): Promise<Ad
       _id: gPlaceId,
       name,
       tags,
+      address,
       description,
       latitude,
       longitude,

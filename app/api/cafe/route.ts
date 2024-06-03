@@ -7,6 +7,7 @@ import Tag from "@/models/Tag"
 export interface CafeGetResponse {
   _id: string
   name: string
+  address: string
   rating: number
   tags: TagType[]
   latitude: number
@@ -20,6 +21,7 @@ export const GET = auth(async (req) => {
   Tag //Make sure model is initalized
   const cafes = await Cafe.find()
     .populate("tags", ["-_id", "name", "rainbow"])
-    .select(["_id", "name", "rating", "tags", "latitude", "longitude"])
+    .select(["_id", "name", "rating", "tags", "latitude", "longitude", "address"])
+    .lean()
   return new Response(JSON.stringify(cafes))
 })

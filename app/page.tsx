@@ -7,7 +7,7 @@ export default async function Home() {
         <h1 className='text-4xl leading-10 font-extrabold'>WroKawka</h1>
         <p className='text-sm leading-5 font-semibold'>Coś wiecej, niż tylko kawiarnie</p>
       </div>
-      <Link href={"/auth/login"} className='py-2 px-4 rounded-2xl bg-zinc-100'>
+      <Link href={"/auth/login/new"} className='py-2 px-4 rounded-2xl bg-zinc-100'>
         <p className='text-sm leading-5 font-medium text-zinc-900'>Zaloguj</p>
       </Link>
     </main>
