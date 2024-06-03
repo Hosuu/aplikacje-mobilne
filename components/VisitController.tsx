@@ -31,7 +31,7 @@ export const VisitController: FC<VisitControllerProps> = ({}) => {
   // filtredCafe.length = 0
 
   return (
-    <div className={`flex flex-col flex-grow gap-2`}>
+    <div className={`flex flex-col gap-4 p-4 bg-zinc-950 flex-grow`}>
       {filtredCafe.map((c, i) => (
         <AddVisitCafeElement key={i} {...c} />
       ))}
@@ -70,12 +70,14 @@ const AddVisitCafeElement: FC<AddVisitCafeElementProps> = ({ _id, name, address 
   const [result, dispatch] = useFormState(addVisitFormAction, undefined)
   return (
     <form action={dispatch}>
-      <div className='flex p-4 gap-4 bg-zinc-950'>
+      <div className='flex p-3 gap-4 rounded-lg bg-zinc-900/50'>
         <div className='flex flex-col gap-2 flex-grow overflow-hidden'>
           <div className='text-zinc-100 text-lg leading-6 font-medium text-ellipsis text-nowrap overflow-hidden'>
             {name}
           </div>
-          <div className='text-xs text-zinc-400'>{address}</div>
+          <div title={address} className='text-xs text-zinc-400 text-ellipsis text-nowrap overflow-hidden'>
+            {address}
+          </div>
         </div>
         <input type='hidden' name='cafeId' value={_id} />
         <AddVisitBtn state={result != undefined ? (result.success ? "SUCCESS" : "ERROR") : "INITIAL"} />
