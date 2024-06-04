@@ -80,7 +80,7 @@ export default async function Page({ params }: pageProps) {
                 ) : (
                   <div className='flex items-end gap-1'>
                     <div className='text-xs text-zinc-400'>({cafe.reviews.length})</div>
-                    <div>{cafe.rating}</div>
+                    <div>{cafe.rating.toFixed(1)}</div>
                   </div>
                 )}
                 <Star className='fill-yellow-500 stroke-yellow-500' />
