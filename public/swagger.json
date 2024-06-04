@@ -1,0 +1,534 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Cafe API",
+    "description": "API for searching cafes, managing tags, users, and reviews.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://aplikacje-mobilne.vercel.app/app"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Cafe",
+      "description": "Endpoints related to cafes"
+    },
+    {
+      "name": "User",
+      "description": "Endpoints related to users"
+    },
+    {
+      "name": "Review",
+      "description": "Endpoints related to reviews"
+    },
+    {
+      "name": "Ranking",
+      "description": "Endpoints related to user rankings"
+    }
+  ],
+  "paths": {
+    "/api/cafe/completion": {
+      "get": {
+        "summary": "Search for cafes based on a query",
+        "tags": ["Cafe"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "description": "The search query for finding cafes",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of cafes matching the search query",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "place_id": {
+                        "type": "string"
+                      },
+                      "formatted_address": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          }
+        }
+      }
+    },
+    "/api/cafe/tags": {
+      "get": {
+        "summary": "Retrieve all tags",
+        "tags": ["Cafe"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of tags",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "rainbow": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          }
+        }
+      }
+    },
+    "/api/cafe": {
+      "get": {
+        "summary": "Retrieve all cafes",
+        "tags": ["Cafe"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of cafes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "place_id": {
+                        "type": "string"
+                      },
+                      "formatted_address": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not authorized"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a new cafe",
+        "tags": ["Cafe"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gPlaceId": {
+                    "type": "string"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "description": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The result of adding a cafe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddCafeResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user": {
+      "get": {
+        "summary": "Retrieve a user by ID",
+        "tags": ["User"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The ID of the user to retrieve",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "username": {
+                      "type": "string"
+                    },
+                    "email_address": {
+                      "type": "string"
+                    },
+                    "points": {
+                      "type": "integer"
+                    },
+                    "rank": {
+                      "type": "integer"
+                    },
+                    "visited_cafes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "last_location": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new user",
+        "tags": ["User"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "email_address": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The result of adding a cafe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/signUpFormResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/review": {
+      "get": {
+        "summary": "Retrieve reviews",
+        "tags": ["Review"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of reviews",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "author": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "rating": {
+                        "type": "number"
+                      },
+                      "time": {
+                        "type": "number"
+                      },
+                      "relative_time_description": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a new review",
+        "tags": ["Review"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "gPlaceId": {
+                    "type": "string"
+                  },
+                  "rating": {
+                    "type": "number"
+                  },
+                  "desc": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The result of adding a cafe",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AddReviewFormResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ranking": {
+      "get": {
+        "summary": "Retrieve user rankings based on points",
+        "tags": ["Ranking"],
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of users sorted by points",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "rank": {
+                        "type": "integer"
+                      },
+                      "points": {
+                        "type": "integer"
+                      },
+                      "username": {
+                        "type": "string"
+                      },
+                      "id": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    },
+    "schemas": {
+      "AddCafeResult": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "description": "Indicates whether the operation was successful"
+          },
+          "criticalError": {
+            "type": "boolean",
+            "description": "Indicates if there was a critical error"
+          },
+          "message": {
+            "type": "string",
+            "description": "A message providing more details about the result"
+          }
+        }
+      },
+      "FieldStatus": {
+        "type": "string",
+        "enum": ["DEFAULT", "ERROR", "SUCCESS"],
+        "description": "The status of the field"
+      },
+      "FieldState": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/FieldStatus"
+          },
+          "message": {
+            "type": "string",
+            "description": "The message associated with the field status"
+          }
+        },
+        "required": ["state", "message"]
+      },
+      "ExtendedFieldState": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FieldState"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "settled": {
+                "type": "boolean",
+                "description": "Indicates if the result is settled"
+              }
+            }
+          }
+        ],
+        "required": ["settled"]
+      },
+      "FieldStateMap": {
+        "type": "object",
+        "properties": {
+          "finalResult": {
+            "$ref": "#/components/schemas/ExtendedFieldState"
+          },
+          "_extraData": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": {
+          "$ref": "#/components/schemas/FieldState"
+        }
+      },
+      "signUpFormResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FieldStateMap"
+          }
+        ]
+      },
+      "AddReviewFormResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/FieldStateMap"
+          }
+        ]
+      }
+    }
+  }
+}

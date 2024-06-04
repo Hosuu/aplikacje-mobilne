@@ -2,7 +2,7 @@ import Link from "next/link"
 
 export default async function Home() {
   return (
-    <main className='flex min-h-screen flex-col items-center justify-center gap-16'>
+    <main className='h-screen overflow-hidden flex min-h-screen flex-col items-center justify-center gap-16'>
       <div>
         <h1 className='text-4xl leading-10 font-extrabold'>WroKawka</h1>
         <p className='text-sm leading-5 font-semibold'>Coś wiecej, niż tylko kawiarnie</p>
