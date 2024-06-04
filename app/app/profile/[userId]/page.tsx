@@ -19,8 +19,8 @@ export default async function Page({ params }: pageProps) {
     .select(["visits"])
     .populate("visits.cafe", ["name"])
     .lean()) as {
-      visits: { cafe: ICafeSchema; timeStamp: number; _id: string }[]
-    }
+    visits: { cafe: ICafeSchema; timeStamp: number; _id: string }[]
+  }
 
   return (
     <div className='flex flex-col gap-4 flex-grow'>
@@ -47,7 +47,7 @@ export default async function Page({ params }: pageProps) {
         <div>
           <InfoLabel label='Recenzje 📋' linkText='Zobacz wszystkie' url={`/app/profile/${user._id}/reviews`} />
           <InfoRow label='Ilość recenzji' value={user.reviews.length} />
-          <InfoRow label='średnia ocena' value={user.avgRating.toFixed(1)} />
+          {user.reviews.length > 0 && <InfoRow label='średnia ocena' value={user.avgRating.toFixed(1)} />}
         </div>
         <div>
           <InfoLabel label='Statystyki 📋' />

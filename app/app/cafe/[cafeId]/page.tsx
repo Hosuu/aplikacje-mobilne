@@ -20,11 +20,13 @@ export default async function Page({ params }: pageProps) {
   await connectToDB()
   User //Make sure model is initalized
   Review //Make sure model is initalized
-  const cafe = await Cafe.findById(params.cafeId).populate({
-    path: "reviews",
-    select: ["rating", "text", "score", "userId", "timeStamp"],
-    populate: { path: "userId", select: ["username"] },
-  })
+  const cafe = await Cafe.findById(params.cafeId)
+    .populate({
+      path: "reviews",
+      select: ["rating", "text", "score", "userId", "timeStamp"],
+      populate: { path: "userId", select: ["username"] },
+    })
+    .lean()
 
   if (cafe === null) return <div>CAFE NOT FOUND</div>
 
@@ -91,6 +93,13 @@ export default async function Page({ params }: pageProps) {
           {address && <InfoRow label='Adres' value={address.split(",")[0]} />}
           <InfoRow label='Piwo 🍺' value={beer ? "Jest!" : "Nie ma :("} />
         </div>
+
+        {cafe.description && cafe.description.length > 0 && (
+          <div className='flex flex-col gap-3'>
+            <InfoLabel label='Opis' />
+            <div>{cafe.description}</div>
+          </div>
+        )}
 
         <div className='flex flex-col gap-3'>
           <InfoLabel label='Recenzje' linkText='Dodaj recenzję' url={params.cafeId + "/addReview"} />
